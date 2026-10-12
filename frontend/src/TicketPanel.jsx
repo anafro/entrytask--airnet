@@ -11,18 +11,40 @@ export default function TicketPanel({ employee, selectedId, sources, onChanged }
   const [message, setMessage] = useState('');
 
   useEffect(() => {
+    const controller = new AbortController();
+    const { signal } = controller;
+
     if (!selectedId) {
       setTicket(null);
       return;
     }
+
     setLoading(true);
     setError('');
     setMessage('');
-    api(`/tickets/${selectedId}`).then(data => {
-      setTicket(data.ticket);
-      setHistory(data.history);
-      setSourceId(String(data.ticket.source?.id ?? ''));
-    }).catch(error => setError(error.message)).finally(() => setLoading(false));
+
+    api(`/tickets/${selectedId}`, { signal })
+      .then(data => {
+          setTicket(data.ticket);
+          setHistory(data.history);
+          setSourceId(String(data.ticket.source?.id ?? ''));
+      })
+      .catch(error => {
+        if (signal.aborted) {
+          return;
+        }
+
+        setError(error.message);
+      })
+      .finally(() => {
+        if (signal.aborted) {
+          return;
+        }
+
+        setLoading(false);
+      });
+
+    return () => controller.abort();
   }, [selectedId]);
 
   async function save() {
