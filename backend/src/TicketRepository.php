@@ -17,14 +17,23 @@ class TicketRepository
             return null;
         }
         $source = pg_fetch_assoc(query('SELECT id, name FROM sources WHERE id=$1', array($row['source_id'])));
-        return array(
+
+        $ticket = [
             'id' => (int) $row['id'],
             'title' => $row['title'],
             'description' => $row['description'],
             'status' => $row['status'],
-            'source' => array('id' => (int) $source['id'], 'name' => $source['name']),
             'updated_at' => $row['updated_at'],
-        );
+        ];
+
+        if ($source !== false) {
+            $ticket['source'] = [
+                'id' => (int) $source['id'],
+                'name' => $source['name']
+            ];
+        }
+
+        return $ticket;
     }
 
     public function sources()
