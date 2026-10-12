@@ -9,6 +9,9 @@ export default defineConfig({
     watch: {
       usePolling: true,
       interval: 250,
+    },
+    test: {
+      environment: 'jsdom',
     }
   },
 });
