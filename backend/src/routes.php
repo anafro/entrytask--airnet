@@ -47,6 +47,8 @@ if (preg_match('~^/api/tickets/([1-9][0-9]*)$~', $path, $matches) && $method ===
     }
     respond(200, array('ticket' => $ticket, 'history' => $repository->history($id)));
 }
+
+requirePermission($employee, 'FUNC_TICKETS_EDIT');
 if (preg_match('~^/api/tickets/([1-9][0-9]*)/source$~', $path, $matches) && $method === 'POST') {
     requireCsrf();
     $body = requestBody();
