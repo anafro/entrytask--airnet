@@ -24,6 +24,7 @@ class TicketRepository
             'description' => $row['description'],
             'status' => $row['status'],
             'updated_at' => $row['updated_at'],
+            'source' => null,
         ];
 
         if ($source !== false) {
